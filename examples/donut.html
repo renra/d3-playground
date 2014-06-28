@@ -1,0 +1,90 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+
+  <title>D3 Experiments - donut</title>
+  <meta name="description" content="D3 Donut Chart">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+</head>
+
+<body>
+
+  <div id="main">
+    <h1>Donut</h1>
+
+    <div id="statistics">
+      <div style="color: green;">Likes: <span id="likes">120</span></div>
+      <div style="color: #CC9900;">Neutral: <span id="neutral">30</span></div>
+      <div style="color: red;">Dislikes: <span id="dislikes">5</span></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var drawDonut = function(){
+      var likes = parseInt($('span#likes').html());
+      var neutral = parseInt($('span#neutral').html());
+      var dislikes = parseInt($('span#dislikes').html());
+
+      var pie_width = 300;
+      var pie_height = 300;
+      var pie_rad = 150;
+
+      var colors = ['red', '#CC9900', 'green'];
+
+      var pie = d3.layout.pie()
+        .sort(null)
+        .value(function(d) { return d.value });
+
+      var arc = d3.svg.arc()
+        .innerRadius(pie_rad - 50)
+        .outerRadius(pie_rad - 10);
+
+      var svg = d3.select("div#main")
+        .append("svg")
+        .attr("width", pie_width)
+        .attr("height", pie_height)
+        .append("g")
+        .attr(
+          "transform", "translate(" + pie_width / 2 + "," + pie_height / 2 + ")"
+        );
+
+      var tween_pie = function(b){
+        var i = d3.interpolate(
+          {
+            startAngle: 1.1*Math.PI,
+            endAngle: 1.1*Math.PI
+          },
+          b
+        );
+
+        return function(t) { return arc(i(t)); }
+      }
+
+      data = [
+        { "label":"Dislikes", "value":dislikes },
+        { "label":"Neutral", "value":neutral },
+        { "label":"Likes", "value":likes }
+      ]
+
+      svg.selectAll("path")
+        .data(pie(data))
+        .enter()
+        .append("path")
+        .attr("fill", function(d, i) { return colors[i]; })
+        .attr("d", arc)
+        .transition()
+        .ease("exp")
+        .duration(500)
+        .attrTween("d", tween_pie)
+    }
+
+    drawDonut();
+  </script>
+
+</body>
+
+</html>
