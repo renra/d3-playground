@@ -1,0 +1,118 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+
+  <title>D3 Experiments - Scale</title>
+  <meta name="description" content="D3 Scale">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script type="text/javascript" src="./js/jquery.js"></script>
+  <script src="./js/d3.js" charset="utf-8"></script>
+
+  <style>
+    div#chart {
+      width: 80%;
+      margin: 0 auto;
+    }
+
+    svg {
+      border: 1px solid teal;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: black;
+      shape-rendering: crispEdges;
+    }
+
+    .axis text {
+      font-family: sans-serif;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Scale</h1>
+
+  <div id="chart">
+  </div>
+
+  <script type="text/javascript">
+    var width = 500;
+    var height = 250;
+    var padding = 40;
+
+    var dataset = [
+      [5, 20], [480, 90], [250, 50], [100, 33], [330, 95],
+      [410, 12], [475, 44], [25, 67], [85, 21], [220, 88]
+    ];
+
+    // Four iterations instead of one?
+    var minX = d3.min(dataset, function(d){
+      return d[0]
+    });
+
+    var minY = d3.min(dataset, function(d){
+      return d[1]
+    });
+
+    var maxX = d3.max(dataset, function(d){
+      return d[0]
+    });
+
+    var maxY = d3.max(dataset, function(d){
+      return d[1]
+    });
+
+    var scaleX = d3.scale.linear()
+      .domain([minX - 10, maxX + 10])
+      .range([0, width]);
+
+    var scaleY = d3.scale.linear()
+      .domain([minY - 10, maxY + 10])
+      .range([height, 0]);
+
+    var svg = d3.select('div#chart')
+      .append('svg')
+      .attr('width', width + 2*padding)
+      .attr('height', height + 20);
+
+    svg.selectAll('circle')
+      .data(dataset)
+      .enter()
+      .append('circle')
+      .attr({
+        cx: function(d) { return padding + scaleX(d[0]) },
+        cy: function(d) { return scaleY(d[1]) },
+        r: 10,
+        fill: 'teal'
+      })
+
+    var axisX = d3.svg.axis()
+      .scale(scaleX)
+      .orient('bottom')
+      .ticks(10);
+
+    var axisY = d3.svg.axis()
+      .scale(scaleY)
+      .orient('left')
+      .ticks(10);
+
+    svg.append('g')
+      .attr('class', 'axis')
+      .attr('transform', "translate(" + padding + "," + height + ")")
+      .call(axisX);
+
+    svg.append('g')
+      .attr('class', 'axis')
+      .attr('transform', "translate(" + padding + ",0)")
+      .call(axisY);
+  </script>
+
+</body>
+
+</html>

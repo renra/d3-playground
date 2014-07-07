@@ -1,0 +1,76 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+
+  <title>D3 Experiments - SVG Bar Chart</title>
+  <meta name="description" content="D3 SVG Bar Chart">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script type="text/javascript" src="./js/jquery.js"></script>
+  <script src="./js/d3.js" charset="utf-8"></script>
+
+  <style>
+    div#chart {
+      width: 80%;
+      margin: 0 auto;
+    }
+
+    svg {
+      border: 1px solid teal;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>SVG Bar Chart</h1>
+
+  <div id="chart">
+  </div>
+
+  <script type="text/javascript">
+    var width = 500;
+    var height = 250;
+
+    var dataset = [
+      5, 12, 24, 11, 6, 34, 27, 31, 5, 21, 34, 4, 5, 6, 23, 5, 8, 7, 25
+    ];
+
+    var svg = d3.select('div#chart')
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height + 20);
+
+    var spacing = 2;
+    var rectWidth = (width - (dataset.length - 1)*spacing) / dataset.length;
+    var verticalScale = 4;
+
+    svg.selectAll('rect')
+      .data(dataset)
+      .enter()
+      .append('rect')
+      .attr('x', function(d, i) { return i*(rectWidth + spacing); })
+      .attr('y', function(d) { return height - verticalScale*d; })
+      .attr('width', rectWidth)
+      .attr('height', function(d) { return d*verticalScale; } )
+      .attr('fill', 'teal');
+
+    svg.selectAll('text')
+      .data(dataset)
+      .enter()
+      .append('text')
+      .text(function(d) { return d; })
+      .attr('x', function(d, i) {
+        return i*(rectWidth + spacing) + rectWidth / 2;
+      })
+      .attr('y', function(d) { return height - verticalScale*d + 15; })
+      .attr('font-family', 'sans-serif')
+      .attr('fill', 'white')
+      .attr('font-size', '12px')
+      .attr('text-anchor', 'middle');
+  </script>
+
+</body>
+
+</html>
